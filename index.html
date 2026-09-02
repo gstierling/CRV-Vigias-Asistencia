@@ -14,9 +14,11 @@
     --border:#2a3140;
     --orange:#f97316;
     --teal:#00d4aa;
+    --red:#ef4444;
+    --yellow:#eab308;
+    --green:#16a34a;
     --text:#e6edf3;
     --text-muted:#8b949e;
-    --danger:#ef4444;
   }
   *{box-sizing:border-box;}
   body{
@@ -34,7 +36,7 @@
   /* ---------- Contador grande ---------- */
   .hero{
     text-align:center;
-    margin-bottom:28px;
+    margin-bottom:32px;
   }
   .hero .numero{
     font-size:5.2rem;
@@ -52,10 +54,10 @@
     font-size:0.95rem;
   }
 
-  /* ---------- Botón acceso planilla ---------- */
+  /* ---------- Botón acceso planilla (ahora al final) ---------- */
   .planilla-wrap{
     text-align:center;
-    margin-bottom:32px;
+    margin-top:44px;
   }
   .btn-planilla{
     background:transparent;
@@ -85,24 +87,25 @@
     font-weight:800;
     letter-spacing:1.5px;
     text-transform:uppercase;
-    font-size:1rem;
+    font-size:1.5rem; /* +50% respecto a 1rem */
     color:var(--text-muted);
-    margin-bottom:14px;
+    margin-bottom:16px;
   }
   .section-title .bar{
-    width:5px;
-    height:18px;
+    width:6px;
+    height:26px;
     border-radius:3px;
   }
-  .section-title.por-confirmar .bar{background:var(--orange);}
-  .section-title.confirmados .bar{background:var(--teal);}
+  .section-title.por-confirmar .bar{background:var(--red);}
+  .section-title.confirmados .bar{background:var(--yellow);}
+  .section-title.asistentes .bar{background:var(--green);}
   .section-title .count{
     margin-left:auto;
     background:var(--panel-2);
     border:1px solid var(--border);
     color:var(--text);
-    font-size:0.8rem;
-    padding:2px 10px;
+    font-size:0.75rem;
+    padding:2px 12px;
     border-radius:999px;
     font-weight:700;
   }
@@ -110,47 +113,58 @@
   .grid-botones{
     display:flex;
     flex-wrap:wrap;
-    gap:10px;
+    gap:12px;
   }
 
   .btn-nombre{
     font-family:inherit;
-    font-weight:700;
-    font-size:0.92rem;
-    padding:12px 18px;
+    font-weight:800;
+    font-size:1.15rem; /* +25% respecto a 0.92rem */
+    padding:15px 23px;  /* +25% respecto a 12px 18px */
     border-radius:14px;
     cursor:pointer;
-    background:var(--panel);
-    border:1.5px solid var(--border);
-    color:var(--text);
-    transition:transform .12s ease, border-color .12s ease, background .12s ease;
+    border:1.5px solid transparent;
+    transition:transform .12s ease, filter .12s ease;
   }
   .btn-nombre:hover{
     transform:translateY(-2px);
   }
+
   .btn-nombre.por-confirmar{
-    border-color:rgba(249,115,22,0.5);
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
   }
-  .btn-nombre.por-confirmar:hover{
-    border-color:var(--orange);
-    background:rgba(249,115,22,0.08);
-  }
+  .btn-nombre.por-confirmar:hover{filter:brightness(1.12);}
+
   .btn-nombre.confirmado{
-    border-color:var(--teal);
-    background:rgba(0,212,170,0.1);
+    background:var(--yellow);
+    border-color:var(--yellow);
+    color:#1a1a1a;
   }
-  .btn-nombre.confirmado::before{
-    content:"✓ ";
-    color:var(--teal);
+  .btn-nombre.confirmado:hover{filter:brightness(1.08);}
+
+  .btn-nombre.asistente{
+    background:var(--green);
+    border-color:var(--green);
+    color:#fff;
   }
-  .btn-nombre.confirmado:hover{
-    background:rgba(0,212,170,0.2);
+  .btn-nombre.asistente:hover{filter:brightness(1.12);}
+
+  .btn-mi-nombre{
+    background:transparent !important;
+    border:2px dashed var(--red) !important;
+    color:var(--red) !important;
+  }
+  .btn-mi-nombre:hover{
+    background:rgba(239,68,68,0.12) !important;
+    filter:none !important;
   }
 
   .vacio{
     color:var(--text-muted);
     font-style:italic;
-    font-size:0.9rem;
+    font-size:0.95rem;
   }
 
   /* ---------- Recuadro "no está mi nombre" ---------- */
@@ -161,6 +175,9 @@
     padding:20px;
     margin-bottom:32px;
     text-align:center;
+  }
+  .agregar-box.oculto{
+    display:none;
   }
   .agregar-box h3{
     margin:0 0 14px;
@@ -203,7 +220,7 @@
     filter:brightness(1.08);
   }
 
-  /* ---------- Modal ---------- */
+  /* ---------- Modal genérico de acción ---------- */
   .overlay{
     position:fixed;
     inset:0;
@@ -225,12 +242,13 @@
     text-align:center;
   }
   .modal p{
-    font-size:1.02rem;
+    font-size:1.15rem;
+    font-weight:800;
     line-height:1.4;
     margin:0 0 20px;
   }
   .modal .error-msg{
-    color:var(--danger);
+    color:var(--red);
     font-size:0.85rem;
     margin-top:-10px;
     margin-bottom:14px;
@@ -250,24 +268,28 @@
     outline:none;
   }
   .modal input[type=password]:focus{border-color:var(--teal);}
+
   .modal-botones{
     display:flex;
+    flex-direction:column;
     gap:10px;
-    justify-content:center;
   }
-  .modal-botones button{
+  .btn-accion{
     font-family:inherit;
     font-weight:800;
     border:none;
-    padding:11px 22px;
+    padding:13px 20px;
     border-radius:10px;
     cursor:pointer;
-    font-size:0.92rem;
+    font-size:0.98rem;
+    width:100%;
   }
-  .btn-si{background:var(--orange); color:#0d1117;}
-  .btn-si:hover{filter:brightness(1.08);}
-  .btn-no{background:var(--panel-2); color:var(--text); border:1px solid var(--border) !important;}
-  .btn-no:hover{background:var(--border);}
+  .btn-accion.red{background:var(--red); color:#fff;}
+  .btn-accion.yellow{background:var(--yellow); color:#1a1a1a;}
+  .btn-accion.green{background:var(--green); color:#fff;}
+  .btn-accion.gray{background:var(--panel-2); color:var(--text); border:1px solid var(--border);}
+  .btn-accion:hover{filter:brightness(1.1);}
+  .btn-accion.gray:hover{filter:none; background:var(--border);}
 
   .cargando{
     text-align:center;
@@ -278,7 +300,8 @@
 
   @media (max-width:480px){
     .hero .numero{font-size:3.8rem;}
-    .btn-nombre{padding:10px 14px; font-size:0.86rem;}
+    .section-title{font-size:1.25rem;}
+    .btn-nombre{padding:12.5px 17.5px; font-size:1.075rem;}
   }
 </style>
 </head>
@@ -289,10 +312,6 @@
   <div class="hero">
     <div class="numero" id="numeroConfirmados">–</div>
     <div class="etiqueta" id="etiquetaFecha">cargando…</div>
-  </div>
-
-  <div class="planilla-wrap">
-    <button class="btn-planilla" id="btnPlanilla">📋 Acceder a la planilla</button>
   </div>
 
   <div class="section">
@@ -306,7 +325,7 @@
     </div>
   </div>
 
-  <div class="agregar-box">
+  <div class="agregar-box oculto" id="agregarBox">
     <h3>Si tu nombre no está, ingrésalo aquí</h3>
     <div class="agregar-form">
       <input type="text" id="inputNuevoNombre" placeholder="Tu nombre completo" maxlength="60">
@@ -325,16 +344,28 @@
     </div>
   </div>
 
+  <div class="section">
+    <div class="section-title asistentes">
+      <div class="bar"></div>
+      ASISTENTES
+      <span class="count" id="countAsistentes">0</span>
+    </div>
+    <div class="grid-botones" id="gridAsistentes">
+      <div class="cargando">Cargando asistentes…</div>
+    </div>
+  </div>
+
+  <div class="planilla-wrap">
+    <button class="btn-planilla" id="btnPlanilla">📋 Acceder a la planilla</button>
+  </div>
+
 </div>
 
-<!-- Modal confirmación asistencia -->
-<div class="overlay" id="overlayConfirmar">
+<!-- Modal genérico de acción (POR CONFIRMAR / CONFIRMADOS / ASISTENTES) -->
+<div class="overlay" id="overlayAccion">
   <div class="modal">
-    <p id="textoConfirmar"></p>
-    <div class="modal-botones">
-      <button class="btn-si" id="btnModalSi">Sí, confirmar</button>
-      <button class="btn-no" id="btnModalNo">Cancelar</button>
-    </div>
+    <p id="textoAccion"></p>
+    <div class="modal-botones" id="botonesAccion"></div>
   </div>
 </div>
 
@@ -345,16 +376,16 @@
     <input type="password" id="inputPassword" placeholder="Clave">
     <div class="error-msg" id="errorPassword"></div>
     <div class="modal-botones">
-      <button class="btn-si" id="btnPasswordOk">Acceder</button>
-      <button class="btn-no" id="btnPasswordCancel">Cancelar</button>
+      <button class="btn-accion yellow" id="btnPasswordOk">Acceder</button>
+      <button class="btn-accion gray" id="btnPasswordCancel">Cancelar</button>
     </div>
   </div>
 </div>
 
 <script>
 /* ============ CONFIGURACIÓN ============ */
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2AfHoohtV2rTVVinmQGMNh64S9Lk7qMn2HLl7cYg1ItxaBtFuZ1t5IdvdUohReQkh/exec'; // URL del deployment de Apps Script
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1dmxU8xKI8DSfknbfFm1n639qSFMuwU8eQl8ullHjPGQ/edit'; // URL de la planilla (para el botón)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2AfHoohtV2rTVVinmQGMNh64S9Lk7qMn2HLl7cYg1ItxaBtFuZ1t5IdvdUohReQkh/exec';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1dmxU8xKI8DSfknbfFm1n639qSFMuwU8eQl8ullHjPGQ/edit';
 const CLAVE_PLANILLA = 'CRVVAsistencia';
 const AUTO_REFRESH_MS = 30000;
 
@@ -390,9 +421,24 @@ const proximoDomingoISO = fechaISO(proximoDomingo);
 document.getElementById('etiquetaFecha').textContent =
   `confirmados domingo ${formatFechaEs(proximoDomingo)}`;
 
+/* ============ ORDEN ALFABÉTICO POR APELLIDO ============ */
+function apellido(nombre){
+  const partes = nombre.trim().split(/\s+/);
+  return partes[partes.length - 1] || '';
+}
+function ordenarPorApellido(lista){
+  return [...lista].sort((a, b) => apellido(a).localeCompare(apellido(b), 'es', { sensitivity: 'base' }));
+}
+
 /* ============ ESTADO ============ */
-let listado = [];      // nombres posibles (desde hoja Listado)
-let confirmadosSet = new Set(); // nombres confirmados para el próximo domingo
+let listado = [];
+let estadosPorNombre = {}; // nombre -> 'confirmado' | 'asistente'
+
+function buscarEstado(nombre){
+  if(estadosPorNombre[nombre]) return estadosPorNombre[nombre];
+  const clave = Object.keys(estadosPorNombre).find(k => k.toLowerCase() === nombre.toLowerCase());
+  return clave ? estadosPorNombre[clave] : null;
+}
 
 /* ============ CARGA DE DATOS ============ */
 async function cargarDatos(){
@@ -403,14 +449,10 @@ async function cargarDatos(){
     listado = data.listado || [];
     const registros = data.registros || [];
 
-    confirmadosSet = new Set(
-      registros
-        .filter(r => r.fecha === proximoDomingoISO)
-        .map(r => r.nombre)
-    );
-
-    // Nombres agregados vía "no está mi nombre" pero que aún no estén en listado
-    // ya se agregan al listado en el backend, así que listado ya los trae.
+    estadosPorNombre = {};
+    registros
+      .filter(r => r.fecha === proximoDomingoISO)
+      .forEach(r => { estadosPorNombre[r.nombre] = r.estado; });
 
     render();
   }catch(err){
@@ -420,27 +462,41 @@ async function cargarDatos(){
 
 /* ============ RENDER ============ */
 function render(){
-  const porConfirmar = listado.filter(n => !confirmadosSet.has(n));
-  const confirmados = listado.filter(n => confirmadosSet.has(n));
+  const porConfirmar = ordenarPorApellido(listado.filter(n => !buscarEstado(n)));
+  const confirmados = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'confirmado'));
+  const asistentes = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'asistente'));
 
-  document.getElementById('numeroConfirmados').textContent = confirmados.length;
+  document.getElementById('numeroConfirmados').textContent = confirmados.length + asistentes.length;
   document.getElementById('countPorConfirmar').textContent = porConfirmar.length;
   document.getElementById('countConfirmados').textContent = confirmados.length;
+  document.getElementById('countAsistentes').textContent = asistentes.length;
 
+  // ---------- POR CONFIRMAR ----------
   const gridPC = document.getElementById('gridPorConfirmar');
   gridPC.innerHTML = '';
+
+  const btnEspecial = document.createElement('button');
+  btnEspecial.className = 'btn-nombre por-confirmar btn-mi-nombre';
+  btnEspecial.textContent = '+ MI NOMBRE NO ESTÁ';
+  btnEspecial.onclick = toggleAgregarBox;
+  gridPC.appendChild(btnEspecial);
+
   if(porConfirmar.length === 0){
-    gridPC.innerHTML = '<div class="vacio">No quedan personas por confirmar.</div>';
+    const vacio = document.createElement('div');
+    vacio.className = 'vacio';
+    vacio.textContent = 'No quedan personas por confirmar.';
+    gridPC.appendChild(vacio);
   }else{
     porConfirmar.forEach(nombre => {
       const btn = document.createElement('button');
       btn.className = 'btn-nombre por-confirmar';
       btn.textContent = nombre;
-      btn.onclick = () => pedirConfirmacion(nombre);
+      btn.onclick = () => abrirModalAccion(nombre, 'por_confirmar');
       gridPC.appendChild(btn);
     });
   }
 
+  // ---------- CONFIRMADOS ----------
   const gridC = document.getElementById('gridConfirmados');
   gridC.innerHTML = '';
   if(confirmados.length === 0){
@@ -450,57 +506,95 @@ function render(){
       const btn = document.createElement('button');
       btn.className = 'btn-nombre confirmado';
       btn.textContent = nombre;
-      btn.onclick = () => pedirDesconfirmacion(nombre);
+      btn.onclick = () => abrirModalAccion(nombre, 'confirmado');
       gridC.appendChild(btn);
+    });
+  }
+
+  // ---------- ASISTENTES ----------
+  const gridA = document.getElementById('gridAsistentes');
+  gridA.innerHTML = '';
+  if(asistentes.length === 0){
+    gridA.innerHTML = '<div class="vacio">Aún no hay asistentes.</div>';
+  }else{
+    asistentes.forEach(nombre => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-nombre asistente';
+      btn.textContent = nombre;
+      btn.onclick = () => abrirModalAccion(nombre, 'asistente');
+      gridA.appendChild(btn);
     });
   }
 }
 
-/* ============ MODAL CONFIRMAR / DESCONFIRMAR ============ */
-const overlayConfirmar = document.getElementById('overlayConfirmar');
-const textoConfirmar = document.getElementById('textoConfirmar');
-const btnModalSi = document.getElementById('btnModalSi');
-const btnModalNo = document.getElementById('btnModalNo');
-let accionPendiente = null;
+/* ============ MODAL GENÉRICO DE ACCIÓN ============ */
+const overlayAccion = document.getElementById('overlayAccion');
+const textoAccion = document.getElementById('textoAccion');
+const botonesAccion = document.getElementById('botonesAccion');
 
-function pedirConfirmacion(nombre){
-  textoConfirmar.textContent =
-    `¿Confirmas la asistencia de "${nombre}" para el domingo ${formatFechaEs(proximoDomingo)}?`;
-  accionPendiente = () => enviarAccion('confirmar', nombre);
-  overlayConfirmar.classList.add('activo');
+function abrirModalAccion(nombre, estadoActual){
+  const opciones = [];
+
+  if(estadoActual === 'por_confirmar'){
+    opciones.push({ label: 'Pasar a CONFIRMADOS', color: 'yellow', accion: () => cambiarEstado(nombre, 'confirmado') });
+  } else if(estadoActual === 'confirmado'){
+    opciones.push({ label: 'Pasar a ASISTENTE', color: 'green', accion: () => cambiarEstado(nombre, 'asistente') });
+    opciones.push({ label: 'Volver a POR CONFIRMAR', color: 'red', accion: () => quitarRegistro(nombre) });
+  } else if(estadoActual === 'asistente'){
+    opciones.push({ label: 'Volver a CONFIRMADOS', color: 'yellow', accion: () => cambiarEstado(nombre, 'confirmado') });
+  }
+
+  opciones.push({ label: 'Cancelar', color: 'gray', accion: null });
+
+  textoAccion.textContent = nombre;
+  botonesAccion.innerHTML = '';
+  opciones.forEach(op => {
+    const btn = document.createElement('button');
+    btn.className = `btn-accion ${op.color}`;
+    btn.textContent = op.label;
+    btn.onclick = () => {
+      cerrarModalAccion();
+      if(op.accion) op.accion();
+    };
+    botonesAccion.appendChild(btn);
+  });
+
+  overlayAccion.classList.add('activo');
 }
 
-function pedirDesconfirmacion(nombre){
-  textoConfirmar.textContent =
-    `¿Quitar a "${nombre}" de los confirmados del domingo ${formatFechaEs(proximoDomingo)}?`;
-  accionPendiente = () => enviarAccion('desconfirmar', nombre);
-  overlayConfirmar.classList.add('activo');
+function cerrarModalAccion(){
+  overlayAccion.classList.remove('activo');
 }
 
-btnModalSi.onclick = () => {
-  overlayConfirmar.classList.remove('activo');
-  if(accionPendiente) accionPendiente();
-  accionPendiente = null;
-};
-btnModalNo.onclick = () => {
-  overlayConfirmar.classList.remove('activo');
-  accionPendiente = null;
-};
-
-async function enviarAccion(action, nombre){
-  // Actualización optimista en pantalla
-  if(action === 'confirmar') confirmadosSet.add(nombre);
-  if(action === 'desconfirmar') confirmadosSet.delete(nombre);
+/* ============ ACCIONES CONTRA EL BACKEND ============ */
+async function cambiarEstado(nombre, nuevoEstado){
+  estadosPorNombre[nombre] = nuevoEstado;
   render();
 
   try{
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action, nombre, fecha: proximoDomingoISO })
+      body: JSON.stringify({ action: 'cambiarEstado', nombre, fecha: proximoDomingoISO, estado: nuevoEstado })
     });
   }catch(err){
-    console.error('Error enviando acción', err);
+    console.error('Error cambiando estado', err);
+  }
+  cargarDatos();
+}
+
+async function quitarRegistro(nombre){
+  delete estadosPorNombre[nombre];
+  render();
+
+  try{
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'quitarRegistro', nombre, fecha: proximoDomingoISO })
+    });
+  }catch(err){
+    console.error('Error quitando registro', err);
   }
   cargarDatos();
 }
@@ -512,10 +606,11 @@ document.getElementById('btnAgregarNuevo').onclick = async () => {
   if(!nombre) return;
 
   input.value = '';
-  listado = listado.some(n => n.toLowerCase() === nombre.toLowerCase())
-    ? listado
-    : [...listado, nombre];
-  confirmadosSet.add(nombre);
+  if(!listado.some(n => n.toLowerCase() === nombre.toLowerCase())){
+    listado = [...listado, nombre];
+  }
+  estadosPorNombre[nombre] = 'confirmado';
+  document.getElementById('agregarBox').classList.add('oculto');
   render();
 
   try{
@@ -533,6 +628,15 @@ document.getElementById('btnAgregarNuevo').onclick = async () => {
 document.getElementById('inputNuevoNombre').addEventListener('keydown', (e) => {
   if(e.key === 'Enter') document.getElementById('btnAgregarNuevo').click();
 });
+
+function toggleAgregarBox(){
+  const box = document.getElementById('agregarBox');
+  box.classList.toggle('oculto');
+  if(!box.classList.contains('oculto')){
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => document.getElementById('inputNuevoNombre').focus(), 300);
+  }
+}
 
 /* ============ MODAL PASSWORD PLANILLA ============ */
 const overlayPassword = document.getElementById('overlayPassword');
