@@ -8,22 +8,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#1b2534;
-    --panel:#26324a;
-    --panel-2:#2e3b56;
-    --border:#414f6c;
+    --bg:#eef2f8;
+    --panel:#ffffff;
+    --panel-2:#f2f5fa;
+    --border:#d6dde8;
     --orange:#f97316;
-    --teal:#00d4aa;
+    --teal:#0f9488;
     --red:#ef4444;
     --yellow:#eab308;
+    --yellow-text:#a16207;
     --green:#16a34a;
-    --text:#e6edf3;
-    --text-muted:#8b949e;
-    --blue-bg:#0f1c33;
-    --blue-border:#25406e;
-    --blue-input:#152645;
-    --blue-accent:#5b9cf6;
-    --blue-accent-2:#8fb8f7;
+    --text:#1e2a3d;
+    --text-muted:#64748b;
+    --blue-bg:#e8f0fe;
+    --blue-border:#b7cef2;
+    --blue-input:#ffffff;
+    --blue-accent:#2563eb;
+    --blue-accent-2:#1d4ed8;
   }
   *{box-sizing:border-box;}
   body{
@@ -42,11 +43,11 @@
   .top-fecha{
     text-align:center;
     color:var(--teal);
-    font-weight:700;
+    font-weight:900;
     letter-spacing:1px;
     text-transform:uppercase;
-    font-size:0.95rem;
-    margin-bottom:16px;
+    font-size:1.7rem;
+    margin-bottom:20px;
   }
   .stats-cards{
     display:flex;
@@ -63,7 +64,7 @@
   .stat-card.stat-yellow{background:var(--yellow);}
   .stat-card.stat-green{background:var(--green);}
   .stat-numero{
-    font-size:2.6rem;
+    font-size:5.2rem; /* el doble de 2.6rem */
     font-weight:900;
     color:#fff;
     line-height:1;
@@ -137,13 +138,10 @@
     text-shadow:0 2px 10px rgba(0,0,0,0.4);
   }
   .section-title.por-confirmar{color:var(--red);}
-  .section-title.confirmados{color:var(--yellow);}
+  .section-title.confirmados{color:var(--yellow-text);}
   .section-title.asistentes{color:var(--green);}
   .section-title-count{
-    font-size:0.7em;
-    font-weight:800;
-    letter-spacing:0;
-    color:var(--text-muted);
+    /* Hereda tamaño, peso, espaciado y color del encabezado; sin overrides. */
   }
 
   .grid-botones{
@@ -208,9 +206,10 @@
   }
   .agregar-box h3{
     margin:0 0 16px;
-    font-size:1.5rem;
+    font-size:clamp(1.05rem, 5.2vw, 1.5rem);
     color:var(--blue-accent-2);
     font-weight:900;
+    white-space:nowrap;
   }
   .agregar-form{
     display:flex;
@@ -241,8 +240,8 @@
   }
   .btn-agregar-confirmar{
     font-family:inherit;
-    background:var(--orange);
-    color:#0d1117;
+    background:var(--yellow);
+    color:#1a1a1a;
     border:none;
     font-weight:800;
     padding:12px 22px;
@@ -395,11 +394,13 @@
         id="inputNuevoNombre"
         placeholder="Tu nombre y apellido"
         maxlength="60"
-        autocomplete="off"
+        autocomplete="nope"
         autocorrect="off"
         autocapitalize="words"
         spellcheck="false"
         name="crv-asistencia-nombre"
+        readonly
+        onfocus="this.removeAttribute('readonly')"
         data-lpignore="true"
         data-1p-ignore="true"
         data-bwignore="true"
@@ -493,7 +494,7 @@ function fechaISO(fecha){
 const proximoDomingo = getProximoDomingo();
 const proximoDomingoISO = fechaISO(proximoDomingo);
 document.getElementById('etiquetaFecha').textContent =
-  `confirmados domingo ${formatFechaEs(proximoDomingo)}`;
+  `Domingo ${formatFechaEs(proximoDomingo)}`;
 
 /* ============ ORDEN ALFABÉTICO POR APELLIDO ============ */
 function apellido(nombre){
