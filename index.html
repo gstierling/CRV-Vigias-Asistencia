@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRV · Asistencia Domingo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1117;
+    --panel:#161b22;
+    --panel-2:#1c2330;
+    --border:#2a3140;
+    --orange:#f97316;
+    --teal:#00d4aa;
+    --text:#e6edf3;
+    --text-muted:#8b949e;
+    --danger:#ef4444;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Nunito', sans-serif;
+    padding:24px 16px 60px;
+  }
+  .container{
+    max-width:900px;
+    margin:0 auto;
+  }
+
+  /* ---------- Contador grande ---------- */
+  .hero{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .hero .numero{
+    font-size:5.2rem;
+    font-weight:900;
+    color:var(--orange);
+    line-height:1;
+    text-shadow:0 0 30px rgba(249,115,22,0.35);
+  }
+  .hero .etiqueta{
+    margin-top:6px;
+    color:var(--teal);
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    font-size:0.95rem;
+  }
+
+  /* ---------- Botón acceso planilla ---------- */
+  .planilla-wrap{
+    text-align:center;
+    margin-bottom:32px;
+  }
+  .btn-planilla{
+    background:transparent;
+    border:2px solid var(--teal);
+    color:var(--teal);
+    font-family:inherit;
+    font-weight:700;
+    padding:10px 22px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:0.9rem;
+    transition:all .15s ease;
+  }
+  .btn-planilla:hover{
+    background:var(--teal);
+    color:#0d1117;
+  }
+
+  /* ---------- Secciones ---------- */
+  .section{
+    margin-bottom:32px;
+  }
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    font-size:1rem;
+    color:var(--text-muted);
+    margin-bottom:14px;
+  }
+  .section-title .bar{
+    width:5px;
+    height:18px;
+    border-radius:3px;
+  }
+  .section-title.por-confirmar .bar{background:var(--orange);}
+  .section-title.confirmados .bar{background:var(--teal);}
+  .section-title .count{
+    margin-left:auto;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:0.8rem;
+    padding:2px 10px;
+    border-radius:999px;
+    font-weight:700;
+  }
+
+  .grid-botones{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .btn-nombre{
+    font-family:inherit;
+    font-weight:700;
+    font-size:0.92rem;
+    padding:12px 18px;
+    border-radius:14px;
+    cursor:pointer;
+    background:var(--panel);
+    border:1.5px solid var(--border);
+    color:var(--text);
+    transition:transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .btn-nombre:hover{
+    transform:translateY(-2px);
+  }
+  .btn-nombre.por-confirmar{
+    border-color:rgba(249,115,22,0.5);
+  }
+  .btn-nombre.por-confirmar:hover{
+    border-color:var(--orange);
+    background:rgba(249,115,22,0.08);
+  }
+  .btn-nombre.confirmado{
+    border-color:var(--teal);
+    background:rgba(0,212,170,0.1);
+  }
+  .btn-nombre.confirmado::before{
+    content:"✓ ";
+    color:var(--teal);
+  }
+  .btn-nombre.confirmado:hover{
+    background:rgba(0,212,170,0.2);
+  }
+
+  .vacio{
+    color:var(--text-muted);
+    font-style:italic;
+    font-size:0.9rem;
+  }
+
+  /* ---------- Recuadro "no está mi nombre" ---------- */
+  .agregar-box{
+    background:var(--panel);
+    border:1.5px dashed var(--border);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:32px;
+    text-align:center;
+  }
+  .agregar-box h3{
+    margin:0 0 14px;
+    font-size:1rem;
+    color:var(--teal);
+    font-weight:800;
+  }
+  .agregar-form{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .agregar-form input{
+    font-family:inherit;
+    background:var(--panel-2);
+    border:1.5px solid var(--border);
+    color:var(--text);
+    padding:12px 16px;
+    border-radius:12px;
+    font-size:0.95rem;
+    min-width:220px;
+    outline:none;
+  }
+  .agregar-form input:focus{
+    border-color:var(--teal);
+  }
+  .agregar-form button{
+    font-family:inherit;
+    background:var(--orange);
+    color:#0d1117;
+    border:none;
+    font-weight:800;
+    padding:12px 22px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:0.95rem;
+  }
+  .agregar-form button:hover{
+    filter:brightness(1.08);
+  }
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:16px;
+  }
+  .overlay.activo{display:flex;}
+  .modal{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:26px;
+    max-width:380px;
+    width:100%;
+    text-align:center;
+  }
+  .modal p{
+    font-size:1.02rem;
+    line-height:1.4;
+    margin:0 0 20px;
+  }
+  .modal .error-msg{
+    color:var(--danger);
+    font-size:0.85rem;
+    margin-top:-10px;
+    margin-bottom:14px;
+    min-height:1em;
+  }
+  .modal input[type=password]{
+    font-family:inherit;
+    width:100%;
+    background:var(--panel-2);
+    border:1.5px solid var(--border);
+    color:var(--text);
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:1rem;
+    margin-bottom:16px;
+    text-align:center;
+    outline:none;
+  }
+  .modal input[type=password]:focus{border-color:var(--teal);}
+  .modal-botones{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+  }
+  .modal-botones button{
+    font-family:inherit;
+    font-weight:800;
+    border:none;
+    padding:11px 22px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:0.92rem;
+  }
+  .btn-si{background:var(--orange); color:#0d1117;}
+  .btn-si:hover{filter:brightness(1.08);}
+  .btn-no{background:var(--panel-2); color:var(--text); border:1px solid var(--border) !important;}
+  .btn-no:hover{background:var(--border);}
+
+  .cargando{
+    text-align:center;
+    color:var(--text-muted);
+    padding:20px;
+    font-style:italic;
+  }
+
+  @media (max-width:480px){
+    .hero .numero{font-size:3.8rem;}
+    .btn-nombre{padding:10px 14px; font-size:0.86rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="numero" id="numeroConfirmados">–</div>
+    <div class="etiqueta" id="etiquetaFecha">cargando…</div>
+  </div>
+
+  <div class="planilla-wrap">
+    <button class="btn-planilla" id="btnPlanilla">📋 Acceder a la planilla</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title por-confirmar">
+      <div class="bar"></div>
+      POR CONFIRMAR
+      <span class="count" id="countPorConfirmar">0</span>
+    </div>
+    <div class="grid-botones" id="gridPorConfirmar">
+      <div class="cargando">Cargando listado…</div>
+    </div>
+  </div>
+
+  <div class="agregar-box">
+    <h3>Si tu nombre no está, ingrésalo aquí</h3>
+    <div class="agregar-form">
+      <input type="text" id="inputNuevoNombre" placeholder="Tu nombre completo" maxlength="60">
+      <button id="btnAgregarNuevo">Confirmar mi asistencia</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title confirmados">
+      <div class="bar"></div>
+      CONFIRMADOS
+      <span class="count" id="countConfirmados">0</span>
+    </div>
+    <div class="grid-botones" id="gridConfirmados">
+      <div class="cargando">Cargando confirmados…</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal confirmación asistencia -->
+<div class="overlay" id="overlayConfirmar">
+  <div class="modal">
+    <p id="textoConfirmar"></p>
+    <div class="modal-botones">
+      <button class="btn-si" id="btnModalSi">Sí, confirmar</button>
+      <button class="btn-no" id="btnModalNo">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal password planilla -->
+<div class="overlay" id="overlayPassword">
+  <div class="modal">
+    <p>Ingresa la clave para acceder a la planilla</p>
+    <input type="password" id="inputPassword" placeholder="Clave">
+    <div class="error-msg" id="errorPassword"></div>
+    <div class="modal-botones">
+      <button class="btn-si" id="btnPasswordOk">Acceder</button>
+      <button class="btn-no" id="btnPasswordCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIGURACIÓN ============ */
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2AfHoohtV2rTVVinmQGMNh64S9Lk7qMn2HLl7cYg1ItxaBtFuZ1t5IdvdUohReQkh/exec'; // URL del deployment de Apps Script
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1dmxU8xKI8DSfknbfFm1n639qSFMuwU8eQl8ullHjPGQ/edit'; // URL de la planilla (para el botón)
+const CLAVE_PLANILLA = 'CRVVAsistencia';
+const AUTO_REFRESH_MS = 30000;
+
+/* ============ FECHA PRÓXIMO DOMINGO ============ */
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                'agosto','septiembre','octubre','noviembre','diciembre'];
+
+function getProximoDomingo(){
+  const hoy = new Date();
+  const dia = hoy.getDay(); // 0 = domingo
+  const diasHasta = (7 - dia) % 7;
+  const fecha = new Date(hoy);
+  fecha.setDate(hoy.getDate() + diasHasta);
+  fecha.setHours(0,0,0,0);
+  return fecha;
+}
+
+function formatFechaEs(fecha){
+  const dd = String(fecha.getDate()).padStart(2,'0');
+  const mes = MESES[fecha.getMonth()];
+  return `${dd} de ${mes}`;
+}
+
+function fechaISO(fecha){
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth()+1).padStart(2,'0');
+  const d = String(fecha.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+
+const proximoDomingo = getProximoDomingo();
+const proximoDomingoISO = fechaISO(proximoDomingo);
+document.getElementById('etiquetaFecha').textContent =
+  `confirmados domingo ${formatFechaEs(proximoDomingo)}`;
+
+/* ============ ESTADO ============ */
+let listado = [];      // nombres posibles (desde hoja Listado)
+let confirmadosSet = new Set(); // nombres confirmados para el próximo domingo
+
+/* ============ CARGA DE DATOS ============ */
+async function cargarDatos(){
+  try{
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=listar`);
+    const data = await res.json();
+
+    listado = data.listado || [];
+    const registros = data.registros || [];
+
+    confirmadosSet = new Set(
+      registros
+        .filter(r => r.fecha === proximoDomingoISO)
+        .map(r => r.nombre)
+    );
+
+    // Nombres agregados vía "no está mi nombre" pero que aún no estén en listado
+    // ya se agregan al listado en el backend, así que listado ya los trae.
+
+    render();
+  }catch(err){
+    console.error('Error cargando datos', err);
+  }
+}
+
+/* ============ RENDER ============ */
+function render(){
+  const porConfirmar = listado.filter(n => !confirmadosSet.has(n));
+  const confirmados = listado.filter(n => confirmadosSet.has(n));
+
+  document.getElementById('numeroConfirmados').textContent = confirmados.length;
+  document.getElementById('countPorConfirmar').textContent = porConfirmar.length;
+  document.getElementById('countConfirmados').textContent = confirmados.length;
+
+  const gridPC = document.getElementById('gridPorConfirmar');
+  gridPC.innerHTML = '';
+  if(porConfirmar.length === 0){
+    gridPC.innerHTML = '<div class="vacio">No quedan personas por confirmar.</div>';
+  }else{
+    porConfirmar.forEach(nombre => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-nombre por-confirmar';
+      btn.textContent = nombre;
+      btn.onclick = () => pedirConfirmacion(nombre);
+      gridPC.appendChild(btn);
+    });
+  }
+
+  const gridC = document.getElementById('gridConfirmados');
+  gridC.innerHTML = '';
+  if(confirmados.length === 0){
+    gridC.innerHTML = '<div class="vacio">Aún no hay confirmados.</div>';
+  }else{
+    confirmados.forEach(nombre => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-nombre confirmado';
+      btn.textContent = nombre;
+      btn.onclick = () => pedirDesconfirmacion(nombre);
+      gridC.appendChild(btn);
+    });
+  }
+}
+
+/* ============ MODAL CONFIRMAR / DESCONFIRMAR ============ */
+const overlayConfirmar = document.getElementById('overlayConfirmar');
+const textoConfirmar = document.getElementById('textoConfirmar');
+const btnModalSi = document.getElementById('btnModalSi');
+const btnModalNo = document.getElementById('btnModalNo');
+let accionPendiente = null;
+
+function pedirConfirmacion(nombre){
+  textoConfirmar.textContent =
+    `¿Confirmas la asistencia de "${nombre}" para el domingo ${formatFechaEs(proximoDomingo)}?`;
+  accionPendiente = () => enviarAccion('confirmar', nombre);
+  overlayConfirmar.classList.add('activo');
+}
+
+function pedirDesconfirmacion(nombre){
+  textoConfirmar.textContent =
+    `¿Quitar a "${nombre}" de los confirmados del domingo ${formatFechaEs(proximoDomingo)}?`;
+  accionPendiente = () => enviarAccion('desconfirmar', nombre);
+  overlayConfirmar.classList.add('activo');
+}
+
+btnModalSi.onclick = () => {
+  overlayConfirmar.classList.remove('activo');
+  if(accionPendiente) accionPendiente();
+  accionPendiente = null;
+};
+btnModalNo.onclick = () => {
+  overlayConfirmar.classList.remove('activo');
+  accionPendiente = null;
+};
+
+async function enviarAccion(action, nombre){
+  // Actualización optimista en pantalla
+  if(action === 'confirmar') confirmadosSet.add(nombre);
+  if(action === 'desconfirmar') confirmadosSet.delete(nombre);
+  render();
+
+  try{
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, nombre, fecha: proximoDomingoISO })
+    });
+  }catch(err){
+    console.error('Error enviando acción', err);
+  }
+  cargarDatos();
+}
+
+/* ============ AGREGAR NUEVO NOMBRE ============ */
+document.getElementById('btnAgregarNuevo').onclick = async () => {
+  const input = document.getElementById('inputNuevoNombre');
+  const nombre = input.value.trim();
+  if(!nombre) return;
+
+  input.value = '';
+  listado = listado.some(n => n.toLowerCase() === nombre.toLowerCase())
+    ? listado
+    : [...listado, nombre];
+  confirmadosSet.add(nombre);
+  render();
+
+  try{
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'agregarNuevo', nombre, fecha: proximoDomingoISO })
+    });
+  }catch(err){
+    console.error('Error agregando nombre', err);
+  }
+  cargarDatos();
+};
+
+document.getElementById('inputNuevoNombre').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter') document.getElementById('btnAgregarNuevo').click();
+});
+
+/* ============ MODAL PASSWORD PLANILLA ============ */
+const overlayPassword = document.getElementById('overlayPassword');
+const inputPassword = document.getElementById('inputPassword');
+const errorPassword = document.getElementById('errorPassword');
+
+document.getElementById('btnPlanilla').onclick = () => {
+  inputPassword.value = '';
+  errorPassword.textContent = '';
+  overlayPassword.classList.add('activo');
+  setTimeout(() => inputPassword.focus(), 50);
+};
+
+document.getElementById('btnPasswordCancel').onclick = () => {
+  overlayPassword.classList.remove('activo');
+};
+
+document.getElementById('btnPasswordOk').onclick = verificarPassword;
+inputPassword.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter') verificarPassword();
+});
+
+function verificarPassword(){
+  if(inputPassword.value === CLAVE_PLANILLA){
+    overlayPassword.classList.remove('activo');
+    window.open(SHEET_URL, '_blank');
+  }else{
+    errorPassword.textContent = 'Clave incorrecta';
+  }
+}
+
+/* ============ INIT ============ */
+cargarDatos();
+setInterval(cargarDatos, AUTO_REFRESH_MS);
+</script>
+
+</body>
+</html>
