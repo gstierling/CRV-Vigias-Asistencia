@@ -19,6 +19,11 @@
     --green:#16a34a;
     --text:#e6edf3;
     --text-muted:#8b949e;
+    --blue-bg:#0f1c33;
+    --blue-border:#25406e;
+    --blue-input:#152645;
+    --blue-accent:#5b9cf6;
+    --blue-accent-2:#8fb8f7;
   }
   *{box-sizing:border-box;}
   body{
@@ -76,52 +81,81 @@
     color:#0d1117;
   }
 
+  /* ---------- Botón "MI NOMBRE NO ESTÁ" (independiente, sobre POR CONFIRMAR) ---------- */
+  .mi-nombre-wrap{
+    text-align:center;
+    margin-bottom:30px;
+  }
+  .btn-mi-nombre-standalone{
+    font-family:inherit;
+    background:transparent;
+    border:2px dashed var(--red);
+    color:var(--red);
+    font-weight:800;
+    font-size:1rem;
+    padding:12px 26px;
+    border-radius:999px;
+    cursor:pointer;
+    letter-spacing:0.5px;
+  }
+  .btn-mi-nombre-standalone:hover{
+    background:rgba(239,68,68,0.12);
+  }
+
   /* ---------- Secciones ---------- */
   .section{
-    margin-bottom:32px;
+    margin-bottom:36px;
+  }
+  .section-title-wrap{
+    text-align:center;
+    margin-bottom:20px;
   }
   .section-title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-weight:800;
-    letter-spacing:1.5px;
+    font-weight:900;
+    letter-spacing:3px;
     text-transform:uppercase;
-    font-size:1.5rem; /* +50% respecto a 1rem */
-    color:var(--text-muted);
-    margin-bottom:16px;
+    font-size:2.1rem;
+    color:var(--text);
+    text-shadow:0 2px 10px rgba(0,0,0,0.4);
   }
-  .section-title .bar{
-    width:6px;
-    height:26px;
+  .section-title.por-confirmar{color:var(--red);}
+  .section-title.confirmados{color:var(--yellow);}
+  .section-title.asistentes{color:var(--green);}
+  .section-title-bar{
+    width:64px;
+    height:5px;
     border-radius:3px;
+    margin:10px auto 0;
   }
-  .section-title.por-confirmar .bar{background:var(--red);}
-  .section-title.confirmados .bar{background:var(--yellow);}
-  .section-title.asistentes .bar{background:var(--green);}
-  .section-title .count{
-    margin-left:auto;
+  .section-title-bar.por-confirmar{background:var(--red);}
+  .section-title-bar.confirmados{background:var(--yellow);}
+  .section-title-bar.asistentes{background:var(--green);}
+  .section-title-count{
+    display:inline-block;
+    margin-top:10px;
     background:var(--panel-2);
     border:1px solid var(--border);
     color:var(--text);
-    font-size:0.75rem;
-    padding:2px 12px;
+    font-size:0.78rem;
+    padding:3px 14px;
     border-radius:999px;
     font-weight:700;
+    letter-spacing:0.5px;
   }
 
   .grid-botones{
     display:flex;
     flex-wrap:wrap;
-    gap:12px;
+    gap:8px;
+    justify-content:center;
   }
 
   .btn-nombre{
     font-family:inherit;
     font-weight:800;
-    font-size:1.15rem; /* +25% respecto a 0.92rem */
-    padding:15px 23px;  /* +25% respecto a 12px 18px */
-    border-radius:14px;
+    font-size:1rem;
+    padding:8px 14px; /* más minimalista */
+    border-radius:10px;
     cursor:pointer;
     border:1.5px solid transparent;
     transition:transform .12s ease, filter .12s ease;
@@ -151,28 +185,18 @@
   }
   .btn-nombre.asistente:hover{filter:brightness(1.12);}
 
-  .btn-mi-nombre{
-    background:transparent !important;
-    border:2px dashed var(--red) !important;
-    color:var(--red) !important;
-  }
-  .btn-mi-nombre:hover{
-    background:rgba(239,68,68,0.12) !important;
-    filter:none !important;
-  }
-
   .vacio{
     color:var(--text-muted);
     font-style:italic;
     font-size:0.95rem;
   }
 
-  /* ---------- Recuadro "no está mi nombre" ---------- */
+  /* ---------- Recuadro "Ingresa tu nombre y apellido" (paleta azul) ---------- */
   .agregar-box{
-    background:var(--panel);
-    border:1.5px dashed var(--border);
+    background:var(--blue-bg);
+    border:1.5px dashed var(--blue-border);
     border-radius:16px;
-    padding:20px;
+    padding:24px 20px;
     margin-bottom:32px;
     text-align:center;
   }
@@ -180,10 +204,10 @@
     display:none;
   }
   .agregar-box h3{
-    margin:0 0 14px;
-    font-size:1rem;
-    color:var(--teal);
-    font-weight:800;
+    margin:0 0 16px;
+    font-size:1.5rem;
+    color:var(--blue-accent-2);
+    font-weight:900;
   }
   .agregar-form{
     display:flex;
@@ -193,19 +217,26 @@
   }
   .agregar-form input{
     font-family:inherit;
-    background:var(--panel-2);
-    border:1.5px solid var(--border);
+    background:var(--blue-input);
+    border:1.5px solid var(--blue-border);
     color:var(--text);
     padding:12px 16px;
     border-radius:12px;
     font-size:0.95rem;
-    min-width:220px;
+    min-width:240px;
     outline:none;
   }
   .agregar-form input:focus{
-    border-color:var(--teal);
+    border-color:var(--blue-accent);
   }
-  .agregar-form button{
+  .agregar-botones{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .btn-agregar-confirmar{
     font-family:inherit;
     background:var(--orange);
     color:#0d1117;
@@ -216,8 +247,22 @@
     cursor:pointer;
     font-size:0.95rem;
   }
-  .agregar-form button:hover{
+  .btn-agregar-confirmar:hover{
     filter:brightness(1.08);
+  }
+  .btn-agregar-cancelar{
+    font-family:inherit;
+    background:var(--panel-2);
+    color:var(--text);
+    border:1px solid var(--border);
+    font-weight:800;
+    padding:12px 22px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:0.95rem;
+  }
+  .btn-agregar-cancelar:hover{
+    background:var(--border);
   }
 
   /* ---------- Modal genérico de acción ---------- */
@@ -300,8 +345,8 @@
 
   @media (max-width:480px){
     .hero .numero{font-size:3.8rem;}
-    .section-title{font-size:1.25rem;}
-    .btn-nombre{padding:12.5px 17.5px; font-size:1.075rem;}
+    .section-title{font-size:1.5rem; letter-spacing:1.5px;}
+    .btn-nombre{padding:7px 12px; font-size:0.92rem;}
   }
 </style>
 </head>
@@ -314,11 +359,15 @@
     <div class="etiqueta" id="etiquetaFecha">cargando…</div>
   </div>
 
+  <div class="mi-nombre-wrap">
+    <button class="btn-mi-nombre-standalone" id="btnMiNombre">+ MI NOMBRE NO ESTÁ</button>
+  </div>
+
   <div class="section">
-    <div class="section-title por-confirmar">
-      <div class="bar"></div>
-      POR CONFIRMAR
-      <span class="count" id="countPorConfirmar">0</span>
+    <div class="section-title-wrap">
+      <div class="section-title por-confirmar">POR CONFIRMAR</div>
+      <div class="section-title-bar por-confirmar"></div>
+      <div class="section-title-count" id="countPorConfirmar">0</div>
     </div>
     <div class="grid-botones" id="gridPorConfirmar">
       <div class="cargando">Cargando listado…</div>
@@ -326,18 +375,34 @@
   </div>
 
   <div class="agregar-box oculto" id="agregarBox">
-    <h3>Si tu nombre no está, ingrésalo aquí</h3>
+    <h3>Ingresa tu nombre y apellido</h3>
     <div class="agregar-form">
-      <input type="text" id="inputNuevoNombre" placeholder="Tu nombre completo" maxlength="60">
-      <button id="btnAgregarNuevo">Confirmar mi asistencia</button>
+      <input
+        type="text"
+        id="inputNuevoNombre"
+        placeholder="Tu nombre y apellido"
+        maxlength="60"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="words"
+        spellcheck="false"
+        name="crv-asistencia-nombre"
+        data-lpignore="true"
+        data-1p-ignore="true"
+        data-bwignore="true"
+        data-form-type="other">
+    </div>
+    <div class="agregar-botones">
+      <button id="btnAgregarNuevo" class="btn-agregar-confirmar">Pasar a CONFIRMADO</button>
+      <button id="btnAgregarCancelar" class="btn-agregar-cancelar">Cancelar</button>
     </div>
   </div>
 
   <div class="section">
-    <div class="section-title confirmados">
-      <div class="bar"></div>
-      CONFIRMADOS
-      <span class="count" id="countConfirmados">0</span>
+    <div class="section-title-wrap">
+      <div class="section-title confirmados">CONFIRMADOS</div>
+      <div class="section-title-bar confirmados"></div>
+      <div class="section-title-count" id="countConfirmados">0</div>
     </div>
     <div class="grid-botones" id="gridConfirmados">
       <div class="cargando">Cargando confirmados…</div>
@@ -345,10 +410,10 @@
   </div>
 
   <div class="section">
-    <div class="section-title asistentes">
-      <div class="bar"></div>
-      ASISTENTES
-      <span class="count" id="countAsistentes">0</span>
+    <div class="section-title-wrap">
+      <div class="section-title asistentes">ASISTENTES</div>
+      <div class="section-title-bar asistentes"></div>
+      <div class="section-title-count" id="countAsistentes">0</div>
     </div>
     <div class="grid-botones" id="gridAsistentes">
       <div class="cargando">Cargando asistentes…</div>
@@ -467,19 +532,13 @@ function render(){
   const asistentes = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'asistente'));
 
   document.getElementById('numeroConfirmados').textContent = confirmados.length + asistentes.length;
-  document.getElementById('countPorConfirmar').textContent = porConfirmar.length;
-  document.getElementById('countConfirmados').textContent = confirmados.length;
-  document.getElementById('countAsistentes').textContent = asistentes.length;
+  document.getElementById('countPorConfirmar').textContent = `${porConfirmar.length} persona${porConfirmar.length === 1 ? '' : 's'}`;
+  document.getElementById('countConfirmados').textContent = `${confirmados.length} persona${confirmados.length === 1 ? '' : 's'}`;
+  document.getElementById('countAsistentes').textContent = `${asistentes.length} persona${asistentes.length === 1 ? '' : 's'}`;
 
   // ---------- POR CONFIRMAR ----------
   const gridPC = document.getElementById('gridPorConfirmar');
   gridPC.innerHTML = '';
-
-  const btnEspecial = document.createElement('button');
-  btnEspecial.className = 'btn-nombre por-confirmar btn-mi-nombre';
-  btnEspecial.textContent = '+ MI NOMBRE NO ESTÁ';
-  btnEspecial.onclick = toggleAgregarBox;
-  gridPC.appendChild(btnEspecial);
 
   if(porConfirmar.length === 0){
     const vacio = document.createElement('div');
@@ -628,6 +687,13 @@ document.getElementById('btnAgregarNuevo').onclick = async () => {
 document.getElementById('inputNuevoNombre').addEventListener('keydown', (e) => {
   if(e.key === 'Enter') document.getElementById('btnAgregarNuevo').click();
 });
+
+document.getElementById('btnAgregarCancelar').onclick = () => {
+  document.getElementById('inputNuevoNombre').value = '';
+  document.getElementById('agregarBox').classList.add('oculto');
+};
+
+document.getElementById('btnMiNombre').onclick = toggleAgregarBox;
 
 function toggleAgregarBox(){
   const box = document.getElementById('agregarBox');
