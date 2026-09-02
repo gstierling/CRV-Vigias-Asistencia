@@ -8,10 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0d1117;
-    --panel:#161b22;
-    --panel-2:#1c2330;
-    --border:#2a3140;
+    --bg:#1b2534;
+    --panel:#26324a;
+    --panel-2:#2e3b56;
+    --border:#414f6c;
     --orange:#f97316;
     --teal:#00d4aa;
     --red:#ef4444;
@@ -38,25 +38,43 @@
     margin:0 auto;
   }
 
-  /* ---------- Contador grande ---------- */
-  .hero{
+  /* ---------- Tarjetas de estadísticas (arriba de todo) ---------- */
+  .top-fecha{
     text-align:center;
-    margin-bottom:32px;
-  }
-  .hero .numero{
-    font-size:5.2rem;
-    font-weight:900;
-    color:var(--orange);
-    line-height:1;
-    text-shadow:0 0 30px rgba(249,115,22,0.35);
-  }
-  .hero .etiqueta{
-    margin-top:6px;
     color:var(--teal);
     font-weight:700;
     letter-spacing:1px;
     text-transform:uppercase;
     font-size:0.95rem;
+    margin-bottom:16px;
+  }
+  .stats-cards{
+    display:flex;
+    gap:12px;
+    margin-bottom:32px;
+  }
+  .stat-card{
+    flex:1;
+    border-radius:16px;
+    padding:20px 8px;
+    text-align:center;
+  }
+  .stat-card.stat-red{background:var(--red);}
+  .stat-card.stat-yellow{background:var(--yellow);}
+  .stat-card.stat-green{background:var(--green);}
+  .stat-numero{
+    font-size:2.6rem;
+    font-weight:900;
+    color:#fff;
+    line-height:1;
+  }
+  .stat-label{
+    margin-top:6px;
+    font-size:0.78rem;
+    font-weight:800;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:#fff;
   }
 
   /* ---------- Botón acceso planilla (ahora al final) ---------- */
@@ -121,26 +139,11 @@
   .section-title.por-confirmar{color:var(--red);}
   .section-title.confirmados{color:var(--yellow);}
   .section-title.asistentes{color:var(--green);}
-  .section-title-bar{
-    width:64px;
-    height:5px;
-    border-radius:3px;
-    margin:10px auto 0;
-  }
-  .section-title-bar.por-confirmar{background:var(--red);}
-  .section-title-bar.confirmados{background:var(--yellow);}
-  .section-title-bar.asistentes{background:var(--green);}
   .section-title-count{
-    display:inline-block;
-    margin-top:10px;
-    background:var(--panel-2);
-    border:1px solid var(--border);
-    color:var(--text);
-    font-size:0.78rem;
-    padding:3px 14px;
-    border-radius:999px;
-    font-weight:700;
-    letter-spacing:0.5px;
+    font-size:0.7em;
+    font-weight:800;
+    letter-spacing:0;
+    color:var(--text-muted);
   }
 
   .grid-botones{
@@ -344,7 +347,8 @@
   }
 
   @media (max-width:480px){
-    .hero .numero{font-size:3.8rem;}
+    .stat-numero{font-size:1.9rem;}
+    .stat-label{font-size:0.62rem;}
     .section-title{font-size:1.5rem; letter-spacing:1.5px;}
     .btn-nombre{padding:7px 12px; font-size:0.92rem;}
   }
@@ -354,9 +358,20 @@
 
 <div class="container">
 
-  <div class="hero">
-    <div class="numero" id="numeroConfirmados">–</div>
-    <div class="etiqueta" id="etiquetaFecha">cargando…</div>
+  <div class="top-fecha" id="etiquetaFecha">cargando…</div>
+  <div class="stats-cards">
+    <div class="stat-card stat-red">
+      <div class="stat-numero" id="statPorConfirmar">–</div>
+      <div class="stat-label">POR CONFIRMAR</div>
+    </div>
+    <div class="stat-card stat-yellow">
+      <div class="stat-numero" id="statConfirmados">–</div>
+      <div class="stat-label">CONFIRMADOS</div>
+    </div>
+    <div class="stat-card stat-green">
+      <div class="stat-numero" id="statAsistentes">–</div>
+      <div class="stat-label">ASISTENTES</div>
+    </div>
   </div>
 
   <div class="mi-nombre-wrap">
@@ -365,9 +380,7 @@
 
   <div class="section">
     <div class="section-title-wrap">
-      <div class="section-title por-confirmar">POR CONFIRMAR</div>
-      <div class="section-title-bar por-confirmar"></div>
-      <div class="section-title-count" id="countPorConfirmar">0</div>
+      <div class="section-title por-confirmar">POR CONFIRMAR <span class="section-title-count">(<span id="countPorConfirmar">0</span>)</span></div>
     </div>
     <div class="grid-botones" id="gridPorConfirmar">
       <div class="cargando">Cargando listado…</div>
@@ -400,9 +413,7 @@
 
   <div class="section">
     <div class="section-title-wrap">
-      <div class="section-title confirmados">CONFIRMADOS</div>
-      <div class="section-title-bar confirmados"></div>
-      <div class="section-title-count" id="countConfirmados">0</div>
+      <div class="section-title confirmados">CONFIRMADOS <span class="section-title-count">(<span id="countConfirmados">0</span>)</span></div>
     </div>
     <div class="grid-botones" id="gridConfirmados">
       <div class="cargando">Cargando confirmados…</div>
@@ -411,9 +422,7 @@
 
   <div class="section">
     <div class="section-title-wrap">
-      <div class="section-title asistentes">ASISTENTES</div>
-      <div class="section-title-bar asistentes"></div>
-      <div class="section-title-count" id="countAsistentes">0</div>
+      <div class="section-title asistentes">ASISTENTES <span class="section-title-count">(<span id="countAsistentes">0</span>)</span></div>
     </div>
     <div class="grid-botones" id="gridAsistentes">
       <div class="cargando">Cargando asistentes…</div>
@@ -531,10 +540,12 @@ function render(){
   const confirmados = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'confirmado'));
   const asistentes = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'asistente'));
 
-  document.getElementById('numeroConfirmados').textContent = confirmados.length + asistentes.length;
-  document.getElementById('countPorConfirmar').textContent = `${porConfirmar.length} persona${porConfirmar.length === 1 ? '' : 's'}`;
-  document.getElementById('countConfirmados').textContent = `${confirmados.length} persona${confirmados.length === 1 ? '' : 's'}`;
-  document.getElementById('countAsistentes').textContent = `${asistentes.length} persona${asistentes.length === 1 ? '' : 's'}`;
+  document.getElementById('statPorConfirmar').textContent = porConfirmar.length;
+  document.getElementById('statConfirmados').textContent = confirmados.length;
+  document.getElementById('statAsistentes').textContent = asistentes.length;
+  document.getElementById('countPorConfirmar').textContent = porConfirmar.length;
+  document.getElementById('countConfirmados').textContent = confirmados.length;
+  document.getElementById('countAsistentes').textContent = asistentes.length;
 
   // ---------- POR CONFIRMAR ----------
   const gridPC = document.getElementById('gridPorConfirmar');
