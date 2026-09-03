@@ -18,6 +18,7 @@
     --yellow:#eab308;
     --cafe:#6f4e37;
     --green:#16a34a;
+    --black:#1a1a1a;
     --text:#1e2a3d;
     --text-muted:#64748b;
     --blue-bg:#e8f0fe;
@@ -141,6 +142,7 @@
   .section-title.por-confirmar{color:var(--red);}
   .section-title.confirmados{color:var(--cafe);}
   .section-title.asistentes{color:var(--green);}
+  .section-title.no-asistira{color:var(--black);}
   .section-title-count{
     /* Hereda tamaño, peso, espaciado y color del encabezado; sin overrides. */
   }
@@ -186,6 +188,13 @@
     color:#fff;
   }
   .btn-nombre.asistente:hover{filter:brightness(1.12);}
+
+  .btn-nombre.no-asistira{
+    background:var(--black);
+    border-color:var(--black);
+    color:#fff;
+  }
+  .btn-nombre.no-asistira:hover{filter:brightness(1.4);}
 
   .vacio{
     color:var(--text-muted);
@@ -340,6 +349,7 @@
   .btn-accion.red{background:var(--red); color:#fff;}
   .btn-accion.yellow{background:var(--yellow); color:#1a1a1a;}
   .btn-accion.cafe{background:var(--cafe); color:#fff;}
+  .btn-accion.black{background:var(--black); color:#fff;}
   .btn-accion.green{background:var(--green); color:#fff;}
   .btn-accion.gray{background:var(--panel-2); color:var(--text); border:1px solid var(--border);}
   .btn-accion:hover{filter:brightness(1.1);}
@@ -460,6 +470,15 @@
     </div>
     <div class="grid-botones" id="gridAsistentes">
       <div class="cargando">Cargando asistentes…</div>
+    </div>
+  </div>
+
+  <div class="section" id="seccionNoAsistira">
+    <div class="section-title-wrap">
+      <div class="section-title no-asistira">NO ASISTIRÉ <span class="section-title-count">(<span id="countNoAsistira">0</span>)</span></div>
+    </div>
+    <div class="grid-botones" id="gridNoAsistira">
+      <div class="cargando">Cargando…</div>
     </div>
   </div>
 
@@ -645,6 +664,7 @@ function render(){
   const porConfirmar = ordenarPorApellido(listado.filter(n => !buscarEstado(n)));
   const confirmados = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'confirmado'));
   const asistentes = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'asistente'));
+  const noAsistira = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'no_asistira'));
 
   document.getElementById('statPorConfirmar').textContent = porConfirmar.length;
   document.getElementById('statConfirmados').textContent = confirmados.length;
@@ -652,6 +672,7 @@ function render(){
   document.getElementById('countPorConfirmar').textContent = porConfirmar.length;
   document.getElementById('countConfirmados').textContent = confirmados.length;
   document.getElementById('countAsistentes').textContent = asistentes.length;
+  document.getElementById('countNoAsistira').textContent = noAsistira.length;
 
   // ---------- POR CONFIRMAR ----------
   const gridPC = document.getElementById('gridPorConfirmar');
@@ -701,6 +722,21 @@ function render(){
       gridA.appendChild(btn);
     });
   }
+
+  // ---------- NO ASISTIRÉ ----------
+  const gridN = document.getElementById('gridNoAsistira');
+  gridN.innerHTML = '';
+  if(noAsistira.length === 0){
+    gridN.innerHTML = '<div class="vacio">Nadie ha indicado que no asistirá.</div>';
+  }else{
+    noAsistira.forEach(nombre => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-nombre no-asistira';
+      btn.textContent = nombre;
+      btn.onclick = () => abrirModalAccion(nombre, 'no_asistira');
+      gridN.appendChild(btn);
+    });
+  }
 }
 
 /* ============ MODAL GENÉRICO DE ACCIÓN ============ */
@@ -713,11 +749,14 @@ function abrirModalAccion(nombre, estadoActual){
 
   if(estadoActual === 'por_confirmar'){
     opciones.push({ label: 'Pasar a CONFIRMADOS', color: 'cafe', accion: () => cambiarEstado(nombre, 'confirmado') });
+    opciones.push({ label: 'No asistiré', color: 'black', accion: () => cambiarEstado(nombre, 'no_asistira') });
   } else if(estadoActual === 'confirmado'){
     opciones.push({ label: 'Volver a POR CONFIRMAR', color: 'red', accion: () => quitarRegistro(nombre) });
     opciones.push({ label: 'Pasar a ASISTENTE', color: 'green', accion: () => cambiarEstado(nombre, 'asistente') });
   } else if(estadoActual === 'asistente'){
     opciones.push({ label: 'Volver a CONFIRMADOS', color: 'cafe', accion: () => cambiarEstado(nombre, 'confirmado') });
+  } else if(estadoActual === 'no_asistira'){
+    opciones.push({ label: 'Volver a POR CONFIRMAR', color: 'red', accion: () => quitarRegistro(nombre) });
   }
 
   opciones.push({ label: 'Cancelar', color: 'gray', accion: null });
@@ -781,7 +820,8 @@ function ocultarActualizando(){
 const SECCION_POR_ESTADO = {
   'por_confirmar': 'seccionPorConfirmar',
   'confirmado': 'seccionConfirmados',
-  'asistente': 'seccionAsistentes'
+  'asistente': 'seccionAsistentes',
+  'no_asistira': 'seccionNoAsistira'
 };
 
 function scrollASeccion(estado){
