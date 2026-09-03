@@ -46,7 +46,8 @@
     font-weight:900;
     letter-spacing:1px;
     text-transform:uppercase;
-    font-size:1.7rem;
+    font-size:clamp(1rem, 5.8vw, 1.7rem);
+    white-space:nowrap;
     margin-bottom:20px;
   }
   .stats-cards{
@@ -289,10 +290,13 @@
     text-align:center;
   }
   .modal p{
-    font-size:1.15rem;
+    font-size:1.5rem; /* tamaño base; se ajusta por JS para no ocupar 2 líneas */
     font-weight:800;
-    line-height:1.4;
+    line-height:1.3;
     margin:0 0 20px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
   .modal .error-msg{
     color:var(--red);
@@ -333,10 +337,35 @@
   }
   .btn-accion.red{background:var(--red); color:#fff;}
   .btn-accion.yellow{background:var(--yellow); color:#1a1a1a;}
+  .btn-accion.cafe{background:var(--cafe); color:#fff;}
   .btn-accion.green{background:var(--green); color:#fff;}
   .btn-accion.gray{background:var(--panel-2); color:var(--text); border:1px solid var(--border);}
   .btn-accion:hover{filter:brightness(1.1);}
   .btn-accion.gray:hover{filter:none; background:var(--border);}
+
+  /* ---------- Aviso "Actualizando" ---------- */
+  .toast-actualizando{
+    position:fixed;
+    top:14px;
+    left:50%;
+    transform:translateX(-50%) translateY(-30px);
+    background:var(--text);
+    color:#fff;
+    padding:10px 22px;
+    border-radius:999px;
+    font-weight:800;
+    font-size:0.9rem;
+    letter-spacing:0.5px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    z-index:100;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .toast-actualizando.activo{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
 
   .cargando{
     text-align:center;
@@ -379,7 +408,7 @@
     <button class="btn-mi-nombre-standalone" id="btnMiNombre">+ MI NOMBRE NO ESTÁ</button>
   </div>
 
-  <div class="section">
+  <div class="section" id="seccionPorConfirmar">
     <div class="section-title-wrap">
       <div class="section-title por-confirmar">POR CONFIRMAR <span class="section-title-count">(<span id="countPorConfirmar">0</span>)</span></div>
     </div>
@@ -414,7 +443,7 @@
     </div>
   </div>
 
-  <div class="section">
+  <div class="section" id="seccionConfirmados">
     <div class="section-title-wrap">
       <div class="section-title confirmados">CONFIRMADOS <span class="section-title-count">(<span id="countConfirmados">0</span>)</span></div>
     </div>
@@ -423,7 +452,7 @@
     </div>
   </div>
 
-  <div class="section">
+  <div class="section" id="seccionAsistentes">
     <div class="section-title-wrap">
       <div class="section-title asistentes">ASISTENTES <span class="section-title-count">(<span id="countAsistentes">0</span>)</span></div>
     </div>
@@ -437,6 +466,9 @@
   </div>
 
 </div>
+
+<!-- Aviso temporal mientras se sincroniza con la planilla -->
+<div class="toast-actualizando" id="toastActualizando">Actualizando…</div>
 
 <!-- Modal genérico de acción (POR CONFIRMAR / CONFIRMADOS / ASISTENTES) -->
 <div class="overlay" id="overlayAccion">
@@ -481,7 +513,7 @@ function getProximoDomingo(){
 }
 
 function formatFechaEs(fecha){
-  const dd = String(fecha.getDate()).padStart(2,'0');
+  const dd = String(fecha.getDate()); // sin cero a la izquierda
   const mes = MESES[fecha.getMonth()];
   return `${dd} de ${mes}`;
 }
@@ -678,12 +710,12 @@ function abrirModalAccion(nombre, estadoActual){
   const opciones = [];
 
   if(estadoActual === 'por_confirmar'){
-    opciones.push({ label: 'Pasar a CONFIRMADOS', color: 'yellow', accion: () => cambiarEstado(nombre, 'confirmado') });
+    opciones.push({ label: 'Pasar a CONFIRMADOS', color: 'cafe', accion: () => cambiarEstado(nombre, 'confirmado') });
   } else if(estadoActual === 'confirmado'){
     opciones.push({ label: 'Volver a POR CONFIRMAR', color: 'red', accion: () => quitarRegistro(nombre) });
     opciones.push({ label: 'Pasar a ASISTENTE', color: 'green', accion: () => cambiarEstado(nombre, 'asistente') });
   } else if(estadoActual === 'asistente'){
-    opciones.push({ label: 'Volver a CONFIRMADOS', color: 'yellow', accion: () => cambiarEstado(nombre, 'confirmado') });
+    opciones.push({ label: 'Volver a CONFIRMADOS', color: 'cafe', accion: () => cambiarEstado(nombre, 'confirmado') });
   }
 
   opciones.push({ label: 'Cancelar', color: 'gray', accion: null });
@@ -702,16 +734,66 @@ function abrirModalAccion(nombre, estadoActual){
   });
 
   overlayAccion.classList.add('activo');
+  ajustarTamanoNombre();
+}
+
+/**
+ * Achica progresivamente el tamaño del nombre en el modal hasta que
+ * quepa completo en una sola línea dentro del ancho disponible.
+ */
+function ajustarTamanoNombre(){
+  const maxRem = 1.5;
+  const minRem = 0.85;
+  const paso = 0.05;
+  let fontSize = maxRem;
+
+  textoAccion.style.fontSize = fontSize + 'rem';
+
+  const disponible = textoAccion.clientWidth;
+  while(textoAccion.scrollWidth > disponible && fontSize > minRem){
+    fontSize -= paso;
+    textoAccion.style.fontSize = fontSize + 'rem';
+  }
 }
 
 function cerrarModalAccion(){
   overlayAccion.classList.remove('activo');
 }
 
+/* ============ AVISO "ACTUALIZANDO" + DESPLAZAMIENTO A LA SECCIÓN DESTINO ============ */
+let accionesEnCurso = 0;
+const toastActualizando = document.getElementById('toastActualizando');
+
+function mostrarActualizando(){
+  accionesEnCurso++;
+  toastActualizando.classList.add('activo');
+}
+
+function ocultarActualizando(){
+  accionesEnCurso = Math.max(0, accionesEnCurso - 1);
+  if(accionesEnCurso === 0){
+    toastActualizando.classList.remove('activo');
+  }
+}
+
+const SECCION_POR_ESTADO = {
+  'por_confirmar': 'seccionPorConfirmar',
+  'confirmado': 'seccionConfirmados',
+  'asistente': 'seccionAsistentes'
+};
+
+function scrollASeccion(estado){
+  const id = SECCION_POR_ESTADO[estado];
+  const el = id && document.getElementById(id);
+  if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 /* ============ ACCIONES CONTRA EL BACKEND ============ */
 async function cambiarEstado(nombre, nuevoEstado){
   estadosPorNombre[nombre] = nuevoEstado;
   render();
+  scrollASeccion(nuevoEstado);
+  mostrarActualizando();
 
   try{
     await fetch(APPS_SCRIPT_URL, {
@@ -722,12 +804,15 @@ async function cambiarEstado(nombre, nuevoEstado){
   }catch(err){
     console.error('Error cambiando estado', err);
   }
-  esperarYVerificar(nombre, nuevoEstado);
+  await esperarYVerificar(nombre, nuevoEstado);
+  ocultarActualizando();
 }
 
 async function quitarRegistro(nombre){
   delete estadosPorNombre[nombre];
   render();
+  scrollASeccion('por_confirmar');
+  mostrarActualizando();
 
   try{
     await fetch(APPS_SCRIPT_URL, {
@@ -738,7 +823,8 @@ async function quitarRegistro(nombre){
   }catch(err){
     console.error('Error quitando registro', err);
   }
-  esperarYVerificar(nombre, null);
+  await esperarYVerificar(nombre, null);
+  ocultarActualizando();
 }
 
 /* ============ AGREGAR NUEVO NOMBRE ============ */
@@ -754,6 +840,8 @@ document.getElementById('btnAgregarNuevo').onclick = async () => {
   estadosPorNombre[nombre] = 'confirmado';
   document.getElementById('agregarBox').classList.add('oculto');
   render();
+  scrollASeccion('confirmado');
+  mostrarActualizando();
 
   try{
     await fetch(APPS_SCRIPT_URL, {
@@ -764,7 +852,8 @@ document.getElementById('btnAgregarNuevo').onclick = async () => {
   }catch(err){
     console.error('Error agregando nombre', err);
   }
-  esperarYVerificar(nombre, 'confirmado');
+  await esperarYVerificar(nombre, 'confirmado');
+  ocultarActualizando();
 };
 
 document.getElementById('inputNuevoNombre').addEventListener('keydown', (e) => {
