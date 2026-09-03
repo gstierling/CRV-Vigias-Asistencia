@@ -16,7 +16,7 @@
     --teal:#0f9488;
     --red:#ef4444;
     --yellow:#eab308;
-    --yellow-text:#a16207;
+    --cafe:#6f4e37;
     --green:#16a34a;
     --text:#1e2a3d;
     --text-muted:#64748b;
@@ -61,7 +61,7 @@
     text-align:center;
   }
   .stat-card.stat-red{background:var(--red);}
-  .stat-card.stat-yellow{background:var(--yellow);}
+  .stat-card.stat-yellow{background:var(--cafe);}
   .stat-card.stat-green{background:var(--green);}
   .stat-numero{
     font-size:5.2rem; /* el doble de 2.6rem */
@@ -138,7 +138,7 @@
     text-shadow:0 2px 10px rgba(0,0,0,0.4);
   }
   .section-title.por-confirmar{color:var(--red);}
-  .section-title.confirmados{color:var(--yellow-text);}
+  .section-title.confirmados{color:var(--cafe);}
   .section-title.asistentes{color:var(--green);}
   .section-title-count{
     /* Hereda tamaño, peso, espaciado y color del encabezado; sin overrides. */
@@ -173,11 +173,11 @@
   .btn-nombre.por-confirmar:hover{filter:brightness(1.12);}
 
   .btn-nombre.confirmado{
-    background:var(--yellow);
-    border-color:var(--yellow);
-    color:#1a1a1a;
+    background:var(--cafe);
+    border-color:var(--cafe);
+    color:#fff;
   }
-  .btn-nombre.confirmado:hover{filter:brightness(1.08);}
+  .btn-nombre.confirmado:hover{filter:brightness(1.15);}
 
   .btn-nombre.asistente{
     background:var(--green);
@@ -346,8 +346,10 @@
   }
 
   @media (max-width:480px){
-    .stat-numero{font-size:1.9rem;}
-    .stat-label{font-size:0.62rem;}
+    .stats-cards{gap:8px;}
+    .stat-card{padding:16px 4px;}
+    .stat-numero{font-size:3.4rem;}
+    .stat-label{font-size:0.66rem;}
     .section-title{font-size:1.5rem; letter-spacing:1.5px;}
     .btn-nombre{padding:7px 12px; font-size:0.92rem;}
   }
@@ -518,7 +520,10 @@ function buscarEstado(nombre){
 /* ============ CARGA DE DATOS ============ */
 async function cargarDatos(){
   try{
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=listar`);
+    // cache: 'no-store' + parámetro único evita que el navegador o Google
+    // sirvan una respuesta en caché justo después de escribir (esto era
+    // la causa más probable de que un cambio "se revirtiera solo").
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=listar&_=${Date.now()}`, { cache: 'no-store' });
     const data = await res.json();
 
     listado = data.listado || [];
@@ -609,8 +614,8 @@ function abrirModalAccion(nombre, estadoActual){
   if(estadoActual === 'por_confirmar'){
     opciones.push({ label: 'Pasar a CONFIRMADOS', color: 'yellow', accion: () => cambiarEstado(nombre, 'confirmado') });
   } else if(estadoActual === 'confirmado'){
-    opciones.push({ label: 'Pasar a ASISTENTE', color: 'green', accion: () => cambiarEstado(nombre, 'asistente') });
     opciones.push({ label: 'Volver a POR CONFIRMAR', color: 'red', accion: () => quitarRegistro(nombre) });
+    opciones.push({ label: 'Pasar a ASISTENTE', color: 'green', accion: () => cambiarEstado(nombre, 'asistente') });
   } else if(estadoActual === 'asistente'){
     opciones.push({ label: 'Volver a CONFIRMADOS', color: 'yellow', accion: () => cambiarEstado(nombre, 'confirmado') });
   }
@@ -651,7 +656,7 @@ async function cambiarEstado(nombre, nuevoEstado){
   }catch(err){
     console.error('Error cambiando estado', err);
   }
-  cargarDatos();
+  setTimeout(cargarDatos, 800);
 }
 
 async function quitarRegistro(nombre){
@@ -667,7 +672,7 @@ async function quitarRegistro(nombre){
   }catch(err){
     console.error('Error quitando registro', err);
   }
-  cargarDatos();
+  setTimeout(cargarDatos, 800);
 }
 
 /* ============ AGREGAR NUEVO NOMBRE ============ */
@@ -693,7 +698,7 @@ document.getElementById('btnAgregarNuevo').onclick = async () => {
   }catch(err){
     console.error('Error agregando nombre', err);
   }
-  cargarDatos();
+  setTimeout(cargarDatos, 800);
 };
 
 document.getElementById('inputNuevoNombre').addEventListener('keydown', (e) => {
