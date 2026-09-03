@@ -52,30 +52,31 @@
     margin-bottom:20px;
   }
   .stats-cards{
-    display:flex;
-    gap:12px;
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
     margin-bottom:32px;
   }
   .stat-card{
-    flex:1;
     border-radius:16px;
-    padding:20px 8px;
+    padding:18px 6px;
     text-align:center;
   }
   .stat-card.stat-red{background:var(--red);}
   .stat-card.stat-yellow{background:var(--cafe);}
   .stat-card.stat-green{background:var(--green);}
+  .stat-card.stat-black{background:var(--black);}
   .stat-numero{
-    font-size:5.2rem; /* el doble de 2.6rem */
+    font-size:clamp(2.1rem, 5.6vw, 4.6rem); /* fluido: se mantiene grande con 4 columnas */
     font-weight:900;
     color:#fff;
     line-height:1;
   }
   .stat-label{
     margin-top:6px;
-    font-size:0.78rem;
+    font-size:0.68rem;
     font-weight:800;
-    letter-spacing:1px;
+    letter-spacing:0.5px;
     text-transform:uppercase;
     color:#fff;
   }
@@ -387,10 +388,10 @@
   }
 
   @media (max-width:480px){
-    .stats-cards{gap:8px;}
+    .stats-cards{grid-template-columns:repeat(2, 1fr); gap:8px;}
     .stat-card{padding:16px 4px;}
-    .stat-numero{font-size:3.4rem;}
-    .stat-label{font-size:0.66rem;}
+    .stat-numero{font-size:3.2rem;}
+    .stat-label{font-size:0.64rem;}
     .section-title{font-size:1.5rem; letter-spacing:1.5px;}
     .btn-nombre{padding:7px 12px; font-size:0.92rem;}
   }
@@ -413,6 +414,10 @@
     <div class="stat-card stat-green">
       <div class="stat-numero" id="statAsistentes">–</div>
       <div class="stat-label">ASISTENTES</div>
+    </div>
+    <div class="stat-card stat-black">
+      <div class="stat-numero" id="statNoAsistira">–</div>
+      <div class="stat-label">NO ASISTIRÁN</div>
     </div>
   </div>
 
@@ -475,7 +480,7 @@
 
   <div class="section" id="seccionNoAsistira">
     <div class="section-title-wrap">
-      <div class="section-title no-asistira">NO ASISTIRÉ <span class="section-title-count">(<span id="countNoAsistira">0</span>)</span></div>
+      <div class="section-title no-asistira">NO ASISTIRÁN <span class="section-title-count">(<span id="countNoAsistira">0</span>)</span></div>
     </div>
     <div class="grid-botones" id="gridNoAsistira">
       <div class="cargando">Cargando…</div>
@@ -669,6 +674,7 @@ function render(){
   document.getElementById('statPorConfirmar').textContent = porConfirmar.length;
   document.getElementById('statConfirmados').textContent = confirmados.length;
   document.getElementById('statAsistentes').textContent = asistentes.length;
+  document.getElementById('statNoAsistira').textContent = noAsistira.length;
   document.getElementById('countPorConfirmar').textContent = porConfirmar.length;
   document.getElementById('countConfirmados').textContent = confirmados.length;
   document.getElementById('countAsistentes').textContent = asistentes.length;
