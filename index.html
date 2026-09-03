@@ -510,6 +510,7 @@ function ordenarPorApellido(lista){
 /* ============ ESTADO ============ */
 let listado = [];
 let estadosPorNombre = {}; // nombre -> 'confirmado' | 'asistente'
+let cargaSeq = 0; // contador para descartar respuestas que llegan fuera de orden
 
 function buscarEstado(nombre){
   if(estadosPorNombre[nombre]) return estadosPorNombre[nombre];
@@ -519,12 +520,18 @@ function buscarEstado(nombre){
 
 /* ============ CARGA DE DATOS ============ */
 async function cargarDatos(){
+  const miId = ++cargaSeq; // identifica esta llamada puntual
   try{
     // cache: 'no-store' + parámetro único evita que el navegador o Google
-    // sirvan una respuesta en caché justo después de escribir (esto era
-    // la causa más probable de que un cambio "se revirtiera solo").
+    // sirvan una respuesta en caché justo después de escribir.
     const res = await fetch(`${APPS_SCRIPT_URL}?action=listar&_=${Date.now()}`, { cache: 'no-store' });
     const data = await res.json();
+
+    // Si mientras esperábamos esta respuesta ya se disparó una carga más
+    // nueva (otra acción, el refresco automático, etc.), esta respuesta
+    // llegó tarde y puede traer datos viejos: se descarta para no pisar
+    // el estado correcto que ya se pintó.
+    if(miId !== cargaSeq) return;
 
     listado = data.listado || [];
     const registros = data.registros || [];
