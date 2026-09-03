@@ -518,6 +518,65 @@ function buscarEstado(nombre){
   return clave ? estadosPorNombre[clave] : null;
 }
 
+/* ============ VERIFICACIÓN CON REINTENTOS (post-acción) ============ */
+/**
+ * Después de escribir en la planilla, en vez de confiar en la primera
+ * lectura que llegue, se verifica que el dato leído YA refleje el cambio
+ * esperado antes de pintarlo. Si todavía no lo refleja (la escritura no
+ * se propagó a tiempo), se descarta esa lectura y se reintenta, sin
+ * tocar el estado optimista que ya se ve en pantalla.
+ *
+ * estadoEsperado: 'confirmado' | 'asistente' | null (null = no debe
+ * tener registro para el próximo domingo, es decir "por confirmar").
+ */
+async function esperarYVerificar(nombre, estadoEsperado, intentos = 5, esperaMs = 700){
+  for(let i = 0; i < intentos; i++){
+    await new Promise(r => setTimeout(r, esperaMs));
+    const confirmado = await intentarSincronizar(nombre, estadoEsperado);
+    if(confirmado) return;
+  }
+  // Se agotaron los reintentos: el refresco automático de 30s lo terminará
+  // de sincronizar. Mientras tanto se deja el estado optimista tal cual.
+}
+
+async function intentarSincronizar(nombre, estadoEsperado){
+  const miId = ++cargaSeq;
+  try{
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=listar&_=${Date.now()}`, { cache: 'no-store' });
+    const data = await res.json();
+
+    if(miId !== cargaSeq) return true; // ya hay una carga más nueva en curso; no seguir con esta cadena
+
+    const nuevoListado = data.listado || [];
+    const registros = data.registros || [];
+    const nuevoEstados = {};
+    registros
+      .filter(r => r.fecha === proximoDomingoISO)
+      .forEach(r => { nuevoEstados[r.nombre] = r.estado; });
+
+    const clave = nuevoEstados[nombre] !== undefined
+      ? nombre
+      : Object.keys(nuevoEstados).find(k => k.toLowerCase() === nombre.toLowerCase());
+    const estadoServidor = clave ? nuevoEstados[clave] : null;
+
+    if(estadoServidor !== estadoEsperado){
+      // El servidor todavía no refleja el cambio: se descarta esta lectura,
+      // NO se pinta, para no revertir momentáneamente lo que ya se ve bien.
+      return false;
+    }
+
+    // Coincide: recién ahora se aplican los datos reales (puede incluir
+    // cambios de otras personas conectadas al mismo tiempo).
+    listado = nuevoListado;
+    estadosPorNombre = nuevoEstados;
+    render();
+    return true;
+  }catch(err){
+    console.error('Error verificando sincronización', err);
+    return false;
+  }
+}
+
 /* ============ CARGA DE DATOS ============ */
 async function cargarDatos(){
   const miId = ++cargaSeq; // identifica esta llamada puntual
@@ -663,7 +722,7 @@ async function cambiarEstado(nombre, nuevoEstado){
   }catch(err){
     console.error('Error cambiando estado', err);
   }
-  setTimeout(cargarDatos, 800);
+  esperarYVerificar(nombre, nuevoEstado);
 }
 
 async function quitarRegistro(nombre){
@@ -679,7 +738,7 @@ async function quitarRegistro(nombre){
   }catch(err){
     console.error('Error quitando registro', err);
   }
-  setTimeout(cargarDatos, 800);
+  esperarYVerificar(nombre, null);
 }
 
 /* ============ AGREGAR NUEVO NOMBRE ============ */
@@ -705,7 +764,7 @@ document.getElementById('btnAgregarNuevo').onclick = async () => {
   }catch(err){
     console.error('Error agregando nombre', err);
   }
-  setTimeout(cargarDatos, 800);
+  esperarYVerificar(nombre, 'confirmado');
 };
 
 document.getElementById('inputNuevoNombre').addEventListener('keydown', (e) => {
