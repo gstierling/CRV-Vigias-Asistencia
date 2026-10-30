@@ -513,23 +513,6 @@
   }
   .puntos-clave.error{animation:sacudir .3s ease;}
 
-  /* ---------- POR CONFIRMAR bloqueado ---------- */
-  .aviso-bloqueo{
-    display:none;
-    text-align:center;
-    font-weight:800;
-    font-size:0.9rem;
-    color:var(--black);
-    margin-bottom:12px;
-  }
-  #seccionPorConfirmar.bloqueado .aviso-bloqueo{display:block;}
-  #seccionPorConfirmar.bloqueado .btn-nombre{
-    opacity:.5;
-    cursor:not-allowed;
-    pointer-events:none;
-    filter:grayscale(.4);
-  }
-
   @media (max-width:480px){
     .stats-cards{grid-template-columns:repeat(2, 1fr); gap:8px;}
     .stat-card{padding:16px 4px;}
@@ -572,7 +555,6 @@
     <div class="section-title-wrap">
       <div class="section-title por-confirmar">POR CONFIRMAR <span class="section-title-count">(<span id="countPorConfirmar">0</span>)</span></div>
     </div>
-    <div class="aviso-bloqueo">🔒 Bloqueado</div>
     <div class="grid-botones" id="gridPorConfirmar">
       <div class="cargando">Cargando listado…</div>
     </div>
@@ -826,7 +808,6 @@ async function cargarDatos(){
 
 /* ============ RENDER ============ */
 function render(){
-  document.getElementById('seccionPorConfirmar').classList.toggle('bloqueado', bloqueado);
   actualizarPanelVigia();
 
   const porConfirmar = ordenarPorApellido(listado.filter(n => !buscarEstado(n)));
