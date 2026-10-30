@@ -387,6 +387,149 @@
     font-style:italic;
   }
 
+  /* ---------- Acceso VIGÍA (candado de letras) ---------- */
+  .vigia-wrap{
+    text-align:center;
+    margin-top:18px;
+  }
+  .btn-vigia-acceso{
+    background:transparent;
+    border:2px solid var(--border);
+    color:var(--text-muted);
+    font-family:inherit;
+    font-weight:700;
+    padding:8px 18px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:0.85rem;
+  }
+  .btn-vigia-acceso:hover{border-color:var(--text-muted);}
+
+  .vigia-panel{
+    display:none;
+    margin:18px auto 0;
+    max-width:360px;
+    background:var(--panel);
+    border:2px solid var(--black);
+    border-radius:16px;
+    padding:16px;
+    text-align:center;
+  }
+  .vigia-panel.activo{display:block;}
+  .vigia-panel .vigia-titulo{
+    font-weight:900;
+    letter-spacing:2px;
+    font-size:0.95rem;
+    margin-bottom:12px;
+    color:var(--text);
+  }
+  .vigia-panel .vigia-estado{
+    font-size:0.85rem;
+    color:var(--text-muted);
+    margin-top:10px;
+  }
+  .vigia-panel .vigia-salir{
+    margin-top:12px;
+    background:transparent;
+    border:none;
+    color:var(--text-muted);
+    font-family:inherit;
+    font-weight:700;
+    font-size:0.85rem;
+    text-decoration:underline;
+    cursor:pointer;
+  }
+  .btn-bloqueo{
+    font-family:inherit;
+    font-weight:900;
+    font-size:1.15rem;
+    width:100%;
+    padding:14px 20px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    color:#fff;
+    background:var(--black);
+  }
+  .btn-bloqueo.desbloquear{background:var(--green);}
+  .btn-bloqueo:disabled{opacity:.6; cursor:wait;}
+
+  .vigia-lock{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px 12px 16px;
+    text-align:center;
+    box-shadow:0 4px 18px rgba(30,42,61,0.08);
+  }
+  .vigia-lock-titulo{
+    font-weight:800;
+    letter-spacing:3px;
+    font-size:0.95rem;
+    color:var(--text-muted);
+    margin-bottom:16px;
+  }
+  .letras-fila{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:16px;
+  }
+  .btn-letra{
+    font-family:inherit;
+    font-weight:900;
+    font-size:clamp(1.5rem, 6.2vw, 2.3rem);
+    width:clamp(52px, 15vw, 78px);
+    aspect-ratio:1 / 1;
+    border-radius:50%;
+    border:none;
+    background:var(--blue-accent);
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(37,99,235,0.35);
+    transition:transform .1s ease, filter .1s ease;
+  }
+  .btn-letra:hover{filter:brightness(1.1);}
+  .btn-letra:active{transform:scale(0.92);}
+  .puntos-clave{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:6px;
+  }
+  .puntos-clave span{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    border:2px solid var(--border);
+    background:transparent;
+  }
+  .puntos-clave span.lleno{background:var(--text); border-color:var(--text);}
+  .puntos-clave.error span{border-color:var(--red); background:var(--red);}
+  @keyframes sacudir{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-8px);}
+    75%{transform:translateX(8px);}
+  }
+  .puntos-clave.error{animation:sacudir .3s ease;}
+
+  /* ---------- POR CONFIRMAR bloqueado ---------- */
+  .aviso-bloqueo{
+    display:none;
+    text-align:center;
+    font-weight:800;
+    font-size:0.9rem;
+    color:var(--black);
+    margin-bottom:12px;
+  }
+  #seccionPorConfirmar.bloqueado .aviso-bloqueo{display:block;}
+  #seccionPorConfirmar.bloqueado .btn-nombre{
+    opacity:.5;
+    cursor:not-allowed;
+    pointer-events:none;
+    filter:grayscale(.4);
+  }
+
   @media (max-width:480px){
     .stats-cards{grid-template-columns:repeat(2, 1fr); gap:8px;}
     .stat-card{padding:16px 4px;}
@@ -429,6 +572,7 @@
     <div class="section-title-wrap">
       <div class="section-title por-confirmar">POR CONFIRMAR <span class="section-title-count">(<span id="countPorConfirmar">0</span>)</span></div>
     </div>
+    <div class="aviso-bloqueo">🔒 Bloqueado</div>
     <div class="grid-botones" id="gridPorConfirmar">
       <div class="cargando">Cargando listado…</div>
     </div>
@@ -489,6 +633,19 @@
 
   <div class="planilla-wrap">
     <button class="btn-planilla" id="btnPlanilla">📋 Acceder a la planilla</button>
+  </div>
+
+  <div class="vigia-wrap">
+    <div class="vigia-lock" id="vigiaLock">
+      <div class="letras-fila" id="letrasFila"></div>
+      <div class="puntos-clave" id="puntosClave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="vigia-panel" id="vigiaPanel">
+      <div class="vigia-titulo">PANEL VIGÍA</div>
+      <button class="btn-bloqueo" id="btnBloqueo">Bloquear</button>
+      <div class="vigia-estado" id="vigiaEstado">POR CONFIRMAR operando normalmente</div>
+      <button class="vigia-salir" id="btnVigiaSalir">Salir</button>
+    </div>
   </div>
 
 </div>
@@ -569,6 +726,7 @@ function ordenarPorApellido(lista){
 let listado = [];
 let estadosPorNombre = {}; // nombre -> 'confirmado' | 'asistente'
 let cargaSeq = 0; // contador para descartar respuestas que llegan fuera de orden
+let bloqueado = false; // true = nadie puede mover botones bajo POR CONFIRMAR
 
 function buscarEstado(nombre){
   if(estadosPorNombre[nombre]) return estadosPorNombre[nombre];
@@ -627,6 +785,7 @@ async function intentarSincronizar(nombre, estadoEsperado){
     // cambios de otras personas conectadas al mismo tiempo).
     listado = nuevoListado;
     estadosPorNombre = nuevoEstados;
+    bloqueado = !!data.bloqueado;
     render();
     return true;
   }catch(err){
@@ -652,6 +811,7 @@ async function cargarDatos(){
 
     listado = data.listado || [];
     const registros = data.registros || [];
+    bloqueado = !!data.bloqueado;
 
     estadosPorNombre = {};
     registros
@@ -666,6 +826,9 @@ async function cargarDatos(){
 
 /* ============ RENDER ============ */
 function render(){
+  document.getElementById('seccionPorConfirmar').classList.toggle('bloqueado', bloqueado);
+  actualizarPanelVigia();
+
   const porConfirmar = ordenarPorApellido(listado.filter(n => !buscarEstado(n)));
   const confirmados = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'confirmado'));
   const asistentes = ordenarPorApellido(listado.filter(n => buscarEstado(n) === 'asistente'));
@@ -751,6 +914,9 @@ const textoAccion = document.getElementById('textoAccion');
 const botonesAccion = document.getElementById('botonesAccion');
 
 function abrirModalAccion(nombre, estadoActual){
+  // Con el bloqueo activo, los botones bajo POR CONFIRMAR no hacen nada.
+  if(estadoActual === 'por_confirmar' && bloqueado) return;
+
   const opciones = [];
 
   if(estadoActual === 'por_confirmar'){
@@ -838,6 +1004,8 @@ function scrollASeccion(estado){
 
 /* ============ ACCIONES CONTRA EL BACKEND ============ */
 async function cambiarEstado(nombre, nuevoEstado){
+  // Si el bloqueo se activó con el menú ya abierto, no mover a quien sigue en POR CONFIRMAR.
+  if(bloqueado && !buscarEstado(nombre)) return;
   estadosPorNombre[nombre] = nuevoEstado;
   render();
   scrollASeccion(nuevoEstado);
@@ -953,6 +1121,87 @@ function verificarPassword(){
     errorPassword.textContent = 'Clave incorrecta';
   }
 }
+
+/* ============ ACCESO VIGÍA (candado de letras) + BLOQUEO ============ */
+// Palabra: VIGIA. Regla de clave: se teclea al revés con las dos últimas
+// intercambiadas -> AIGVI, y la clave larga la repite dos veces: AIGVIAIGVI
+// (10 toques). Las letras se muestran en orden normal.
+const PALABRA_VIGIA = 'VIGIA';
+const CLAVE_VIGIA = 'AIGVIAIGVI';
+
+const letrasFila = document.getElementById('letrasFila');
+const puntosClave = document.getElementById('puntosClave');
+const vigiaPanel = document.getElementById('vigiaPanel');
+const vigiaLock = document.getElementById('vigiaLock');
+const btnBloqueo = document.getElementById('btnBloqueo');
+let tecleado = '';
+let vigiaDentro = false;
+
+try{ vigiaDentro = sessionStorage.getItem('crvVigia') === '1'; }catch(e){}
+
+PALABRA_VIGIA.split('').forEach(letra => {
+  const b = document.createElement('button');
+  b.className = 'btn-letra';
+  b.textContent = letra;
+  b.onclick = () => teclearLetra(letra);
+  letrasFila.appendChild(b);
+});
+
+function pintarPuntos(error){
+  [...puntosClave.children].forEach((p, i) => p.classList.toggle('lleno', i < tecleado.length));
+  puntosClave.classList.toggle('error', !!error);
+}
+
+function teclearLetra(letra){
+  tecleado += letra;
+  pintarPuntos(false);
+  if(tecleado.length < CLAVE_VIGIA.length) return;
+
+  if(tecleado === CLAVE_VIGIA){
+    tecleado = '';
+    vigiaDentro = true;
+    try{ sessionStorage.setItem('crvVigia', '1'); }catch(e){}
+    actualizarPanelVigia();
+  }else{
+    pintarPuntos(true);
+    tecleado = '';
+    setTimeout(() => pintarPuntos(false), 400);
+  }
+}
+
+document.getElementById('btnVigiaSalir').onclick = () => {
+  vigiaDentro = false;
+  try{ sessionStorage.removeItem('crvVigia'); }catch(e){}
+  actualizarPanelVigia();
+};
+
+function actualizarPanelVigia(){
+  vigiaPanel.classList.toggle('activo', vigiaDentro);
+  vigiaLock.style.display = vigiaDentro ? 'none' : '';
+  btnBloqueo.textContent = bloqueado ? 'Desbloquear' : 'Bloquear';
+  btnBloqueo.classList.toggle('desbloquear', bloqueado);
+  document.getElementById('vigiaEstado').textContent = bloqueado
+    ? 'POR CONFIRMAR está bloqueado para todos'
+    : 'POR CONFIRMAR operando normalmente';
+}
+
+btnBloqueo.onclick = async () => {
+  const nuevo = !bloqueado;
+  btnBloqueo.disabled = true;
+  bloqueado = nuevo;
+  render();
+  try{
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'setBloqueo', clave: CLAVE_VIGIA, bloqueado: nuevo })
+    });
+  }catch(err){
+    console.error('Error cambiando bloqueo', err);
+  }
+  btnBloqueo.disabled = false;
+  cargarDatos(); // confirma contra el servidor (y descarta lecturas viejas en vuelo)
+};
 
 /* ============ INIT ============ */
 cargarDatos();
